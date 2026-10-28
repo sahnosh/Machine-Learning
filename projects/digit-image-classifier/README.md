@@ -1,5 +1,9 @@
 # Handwritten Digit Image Classification
 
+## View the output
+
+[Open the visual results report](https://sahnosh.github.io/Machine-Learning/) — includes sample images, actual/predicted digits, test accuracy, and the confusion matrix. This is a recorded evaluation report, not live inference.
+
 Classify grayscale images of handwritten digits **0-9** with Python and scikit-learn. This small project demonstrates an end-to-end image classification workflow: load images, preprocess pixels, train a classifier, evaluate unseen images, and predict a sample.
 
 ## Dataset and method
