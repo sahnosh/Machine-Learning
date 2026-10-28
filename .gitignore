@@ -5,3 +5,10 @@ __pycache__/
 .pytest_cache/
 artifacts/
 .env
+.env.*
+!.env.example
+.ipynb_checkpoints/
+.ruff_cache/
+.mypy_cache/
+.DS_Store
+Thumbs.db
