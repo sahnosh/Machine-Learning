@@ -1,8 +1,10 @@
-# نصب نسخهٔ گیت‌هاب
+# SMS Spam Detection
 
-این پوشه شامل کد، ابزار دریافت دادهٔ عمومی UCI همراه ذکر منبع، آزمون‌ها و گزارش ارزیابی است. دادهٔ خام، مدل و محیط پایتون محلی در گیت ذخیره نشده‌اند؛ setup.cmd داده را دریافت و مدل را دوباره آموزش می‌دهد.
+A machine learning project that classifies English SMS messages as **spam** (unwanted messages) or **ham** (normal messages). It includes a desktop interface, command-line prediction, model training, evaluation reports, and automated tests.
 
-در ویندوز، Python 3.11 همراه Python Launcher را نصب کنید، مخزن را روی درایو E دریافت کنید و در پوشهٔ `SpamDetection` فایل `setup.cmd` را اجرا کنید. بار اول برای نصب بسته‌ها اینترنت لازم است. سپس `run.cmd` را باز کنید.
+## Install from GitHub
+
+On Windows, install Python 3.11 with the Python Launcher and Git. Clone the repository to drive E, then run the setup script from the project folder:
 
 ```powershell
 git clone https://github.com/sahnosh/Machine-Learning.git E:\Machine-Learning
@@ -11,66 +13,123 @@ cd E:\Machine-Learning\SpamDetection
 .\run.cmd
 ```
 
-در نسخهٔ محلی اصلی، پایتون مستقل و بسته‌های نصب آفلاین همچنان در `E:\SpamDetection` موجودند. در نسخهٔ کلون‌شده، محیط مجازی و کش داخل پوشهٔ پروژه ساخته می‌شوند و پایتون پایه از نصب انتخابی شما استفاده می‌کند.
+`setup.cmd` creates a virtual environment, installs the pinned dependencies, downloads the public UCI dataset, and trains the model. Internet access is required for the initial package and dataset downloads.
 
-برای اجرای دستی با Python 3.11:
+The repository contains source code, dataset attribution, tests, and evaluation reports. Raw data, the trained model, the Python runtime, and installed packages are kept locally and are recreated or downloaded during setup.
 
-```text
-python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
-.venv\Scripts\python spam_detector.py train
-.venv\Scripts\python gui.py
-.venv\Scripts\python -m unittest discover -s tests -v
-```
+### Original local installation
 
----
+The original installation is located at `E:\SpamDetection`. Its standalone Python runtime, virtual environment, dependencies, package cache, and temporary files are all on drive E. It also includes a `wheelhouse` folder for offline package installation.
 
-# پروژه تشخیص اسپم پیامک
+A fresh GitHub clone creates its virtual environment and cache inside the project folder and uses your installed Python 3.11 as the base interpreter unless a local `runtime\python.exe` is available. Offline setup requires both the downloaded dataset and all required package wheels to be available locally.
 
-این پروژه پیامک انگلیسی را به دو دسته spam (ناخواسته) و ham (عادی) تقسیم می‌کند.
-همه فایل‌ها، پایتون مستقل، محیط مجازی، بسته‌ها، کش و فایل‌های موقت پروژه در E:\SpamDetection قرار دارند.
+### Manual setup
 
-## اجرای سریع
-روی `run.cmd` دوبار کلیک کنید و یک پیام انگلیسی وارد کنید.
-برای آموزش مجدد `train.cmd` را اجرا کنید.
-برای استفاده در PowerShell:
+From the project folder, using Python 3.11:
 
 ```powershell
-cd E:\SpamDetection
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe spam_detector.py train
+.\.venv\Scripts\python.exe gui.py
+```
+
+## Usage
+
+After setup, double-click `run.cmd` and enter an English message in the desktop interface. To retrain the model, run `train.cmd`.
+
+For command-line prediction, run these commands from the project folder:
+
+```powershell
 .\run_cli.cmd predict "Congratulations! You have won a free prize. Call now to claim!"
 .\run_cli.cmd predict "Can we meet tomorrow for lunch?"
 .\run_cli.cmd train
+```
+
+Training and prediction run locally after the initial downloads. Messages entered for prediction are not sent over the internet.
+
+## Dataset and training method
+
+The project uses the UCI SMS Spam Collection. Dataset attribution, source links, and license information are recorded in [data/SOURCE.md](data/SOURCE.md).
+
+1. Normalize case and whitespace to identify duplicate messages.
+2. Remove duplicate messages and groups with conflicting labels.
+3. Split the remaining data into stratified training and test sets: 80% training and 20% testing, with `random_state=42`.
+4. Fit a TF-IDF vectorizer with word unigrams and bigrams on the training set only.
+5. Train a Multinomial Naive Bayes classifier with `alpha=0.1`.
+6. Evaluate on the held-out test set and save the evaluated model.
+
+The saved model is trained only on the training split. Test messages are not used to fit the vocabulary or classifier. This split does not necessarily separate near-duplicate messages and does not replace evaluation on new, real-world messages.
+
+## Evaluation results
+
+The initial run used 5,159 unique, non-conflicting messages: 4,127 for training and 1,032 for testing.
+
+| Metric | Result |
+| --- | ---: |
+| Overall accuracy | 98.26% |
+| Spam precision | 98.25% |
+| Spam recall | 87.50% |
+| Spam F1 score | 92.56% |
+
+The test set contained 904 normal messages and 128 spam messages. The model correctly identified 112 spam messages, missed 16 spam messages, and incorrectly flagged 2 normal messages as spam.
+
+Full results are available in [reports/metrics.json](reports/metrics.json) and [reports/evaluation.txt](reports/evaluation.txt). In the confusion matrix, rows represent actual labels and columns represent predicted labels, in the order `ham`, `spam`.
+
+## Project files
+
+| Path | Purpose |
+| --- | --- |
+| `spam_detector.py` | Dataset download, cleaning, training, evaluation, and prediction |
+| `gui.py` | Local desktop interface |
+| `data/SOURCE.md` | Dataset attribution and license information |
+| `data/SMSSpamCollection` | Downloaded dataset; generated locally |
+| `models/spam_model.joblib` | Trained model; generated locally |
+| `reports/metrics.json` | Accuracy, precision, recall, F1, and confusion matrix |
+| `reports/evaluation.txt` | Human-readable evaluation report |
+| `reports/test_predictions.csv` | Test-set predictions; generated locally |
+| `reports/validation.txt` | Recorded validation results |
+| `tests/test_pipeline.py` | Automated tests |
+| `requirements.txt` / `requirements-lock.txt` | Pinned dependency versions |
+| `setup.cmd` | Environment setup and model training |
+| `environment.cmd` | Project-local environment settings |
+| `run.cmd` / `run_cli.cmd` | Desktop and command-line launchers |
+| `train.cmd` / `test.cmd` | Training and test launchers |
+| `.venv/` | Local virtual environment and installed dependencies |
+| `runtime/` | Standalone Python and its license in the original installation |
+| `wheelhouse/` | Local package wheels for offline installation |
+| `cache/` / `tmp/` | Project-local cache and temporary files |
+
+## Tests
+
+Run `test.cmd`, or execute:
+
+```powershell
 .\.venv\Scripts\python.exe -m unittest discover -s tests -v
 ```
 
-## روش یادگیری
-داده واقعی UCI SMS Spam Collection با منبع و مجوز در data/SOURCE.md ذخیره شده است.
-پس از حذف پیام‌های تکراری بر اساس حروف کوچک و فاصله‌ها و حذف گروه‌های دارای برچسب متناقض، تقسیم طبقه‌بندی‌شده ۸۰/۲۰ با seed=42 انجام می‌شود.
-TF-IDF تک‌واژه و دوواژه فقط روی داده آموزشی برازش می‌شود و مدل Multinomial Naive Bayes با alpha=0.1 آموزش می‌بیند.
-مدل ذخیره‌شده همان مدل ارزیابی‌شده است؛ داده آزمون وارد آموزش نمی‌شود.
-این تقسیم لزوماً پیام‌های بسیار مشابه را از هم جدا نمی‌کند و جایگزین آزمون روی پیام‌های جدید نیست.
+The original installation passed all four automated tests, the dependency compatibility check, and desktop button checks with spam and ham examples. The drive-E isolation test applies to the original installation with its standalone runtime and is skipped in a fresh clone without that runtime.
 
-## فایل‌ها
-- spam_detector.py: دانلود داده، پاک‌سازی، آموزش، ارزیابی و پیش‌بینی
-- gui.py: رابط دسکتاپ محلی
-- data/: مجموعه داده اصلی و ذکر منبع
-- models/spam_model.joblib: مدل آموزش‌دیده
-- reports/metrics.json: Accuracy، Precision، Recall، F1 و ماتریس خطا؛ سطرها واقعی و ستون‌ها پیش‌بینی هستند
-- reports/evaluation.txt: گزارش قابل مطالعه
-- reports/test_predictions.csv: پیش‌بینی‌های مجموعه آزمون
-- runtime/: پایتون مستقل همراه مجوز اصلی
-- .venv/: محیط مجازی و تمام وابستگی‌های نصب‌شده
-- requirements.txt و requirements-lock.txt: نسخه بسته‌ها
-- wheelhouse/: بسته‌های نصب برای نصب مجدد بدون اینترنت
-- setup.cmd: بازسازی محیط و آموزش؛ پس از دریافت اولیه داده و بسته‌ها بدون اینترنت قابل اجرا است
+## Train with your own data
 
-مدل برای زبان انگلیسی آموزش دیده است؛ عملکرد دری/فارسی ارزیابی نشده و برای آن به داده برچسب‌دار مناسب نیاز است.
-امتیاز اسپم یک احتمال کالیبره‌شده نیست. پیش‌بینی می‌تواند اشتباه باشد.
-پس از نصب و دانلود اولیه، آموزش و پیش‌بینی محلی است و متن پیام‌ها به اینترنت ارسال نمی‌شود.
-فقط مدل joblib قابل اعتماد همین پروژه را بارگذاری کنید.
-برای داده اختصاصی، فایل UTF-8 بدون سربرگ با ساختار label سپس TAB سپس message بسازید و دستور train --data را به آن بدهید.
-نسخه پایتون 3.11.1 از نصب موجود به runtime کپی شده و به پایتون درایو C وابسته نیست؛ برای محصول عملیاتی باید نسخه پشتیبانی‌شده و به‌روز جایگزین گردد.
+Create a UTF-8 text file without a header. Each row must contain a label (`ham` or `spam`), a tab character, and a nonempty message:
 
-## نتیجه اجرای اولیه
-دقت روی ۱٬۰۳۲ پیام آزمون: ۹۸٫۲۶٪. Precision اسپم: ۹۸٫۲۵٪، Recall اسپم: ۸۷٫۵٪، F1 اسپم: ۹۲٫۵۶٪.
-چهار آزمون خودکار، بررسی سازگاری بسته‌ها و آزمون دکمه رابط گرافیکی موفق بودند. برای اجرای دوباره آزمون‌ها test.cmd را باز کنید.
+```text
+ham	Can we meet tomorrow for lunch?
+spam	Congratulations! Claim your free prize now!
+```
+
+The separators above are actual tab characters. Provide enough examples of both labels for the stratified train/test split, then run:
+
+```powershell
+.\run_cli.cmd train --data "E:\path\to\messages.tsv"
+```
+
+Training replaces the saved model and evaluation reports.
+
+## Limitations
+
+- The model is trained on English SMS messages. Dari/Persian performance has not been evaluated and requires suitable labeled training data.
+- The spam score is not a calibrated probability, and predictions can be incorrect.
+- Load only trusted `joblib` model files created by this project.
+- The original standalone runtime is Python 3.11.1, copied from the existing installation. Use an updated, supported Python release for production deployment and verify dependency compatibility.
