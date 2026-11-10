@@ -1,0 +1,5 @@
+4 unit tests passed.
+pip check: no broken requirements.
+GUI button tested with spam and ham examples: passed.
+Runtime and all imported ML packages verified on E:.
+SciPy wheel SHA256 verified against official PyPI metadata.

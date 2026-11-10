@@ -1,0 +1,11 @@
+.venv/
+runtime/
+cache/
+tmp/
+wheelhouse/
+__pycache__/
+*.pyc
+
+models/*.joblib
+data/*.zip
+reports/test_predictions.csv

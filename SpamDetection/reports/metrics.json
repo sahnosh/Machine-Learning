@@ -1,0 +1,58 @@
+{
+  "raw_rows": 5574,
+  "usable_unique_rows": 5159,
+  "removed_duplicate_or_conflicting_rows": 415,
+  "train_rows": 4127,
+  "test_rows": 1032,
+  "class_counts": {
+    "ham": 4517,
+    "spam": 642
+  },
+  "random_seed": 42,
+  "accuracy": 0.9825581395348837,
+  "classification_report": {
+    "ham": {
+      "precision": 0.9825708061002179,
+      "recall": 0.9977876106194691,
+      "f1-score": 0.9901207464324918,
+      "support": 904.0
+    },
+    "spam": {
+      "precision": 0.9824561403508771,
+      "recall": 0.875,
+      "f1-score": 0.9256198347107438,
+      "support": 128.0
+    },
+    "accuracy": 0.9825581395348837,
+    "macro avg": {
+      "precision": 0.9825134732255475,
+      "recall": 0.9363938053097345,
+      "f1-score": 0.9578702905716179,
+      "support": 1032.0
+    },
+    "weighted avg": {
+      "precision": 0.9825565839917725,
+      "recall": 0.9825581395348837,
+      "f1-score": 0.9821206333507246,
+      "support": 1032.0
+    }
+  },
+  "confusion_matrix_labels": [
+    "ham",
+    "spam"
+  ],
+  "confusion_matrix": [
+    [
+      902,
+      2
+    ],
+    [
+      16,
+      112
+    ]
+  ],
+  "dataset_sha256": "7d039a24a6083ed9ef0f806ebad56bbb976e3aeb8de05669173bfdc4996c239d",
+  "sklearn_version": "1.5.2",
+  "trained_utc": "2026-11-10T09:48:19.071677+00:00",
+  "evaluation": "Fixed stratified 80/20 holdout; normalized duplicates and conflicting groups removed before splitting. Vocabulary learned only on training data. Saved model is the evaluated training-split model."
+}

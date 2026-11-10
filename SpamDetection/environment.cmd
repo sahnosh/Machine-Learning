@@ -1,0 +1,12 @@
+@echo off
+set "PYTHONHOME="
+set "PYTHONPATH="
+set "PYTHONNOUSERSITE=1"
+set "PIP_CACHE_DIR=%~dp0cache"
+set "TEMP=%~dp0tmp"
+set "TMP=%~dp0tmp"
+if not exist "%~dp0tmp" mkdir "%~dp0tmp"
+if not exist "%~dp0cache" mkdir "%~dp0cache"
+if exist "%~dp0runtime\tcl\tcl8.6" set "TCL_LIBRARY=%~dp0runtime\tcl\tcl8.6"
+if exist "%~dp0runtime\tcl\tk8.6" set "TK_LIBRARY=%~dp0runtime\tcl\tk8.6"
+cd /d "%~dp0"
