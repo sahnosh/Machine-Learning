@@ -1,0 +1,17 @@
+{
+  "split": "earliest 80% per user for training; latest 20% for test",
+  "relevance": "test rating >= 4",
+  "evaluated_users": 592,
+  "train_ratings": 80419,
+  "note": "Per-user temporal split; not a global time cutoff. Unseen training items count as misses. Scores are ranking estimates, not probabilities.",
+  "collaborative": {
+    "recall_at_10": 0.0480806556355445,
+    "precision_at_10": 0.0543918918918919,
+    "hit_rate_at_10": 0.33952702702702703
+  },
+  "popularity": {
+    "recall_at_10": 0.03235768620891032,
+    "precision_at_10": 0.04442567567567567,
+    "hit_rate_at_10": 0.27364864864864863
+  }
+}
